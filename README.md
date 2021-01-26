@@ -1,18 +1,25 @@
-## 一个非常小的rpc 样品，基于java8工具包实现。
- RPC是远程过程调用协议，其作用就是客户端与服务端之间的远程调用，就像本地自己调用一样，让服务端进行服务化，功能唯一性，负载热点流量。
+## 一个非常小的rpc 样品，基于java8工具包实现
+[TOC]
+
+## 一、RPC功能
+
+RPC是远程过程调用协议，其作用就是客户端与服务端之间的远程调用，就像本地自己调用一样，让服务端进行服务化，功能唯一性，负载热点流量。
 
 RPC能够让本地应用简单、高效地调用服务器中的过程（服务）。它主要应用在分布式系统。如Hadoop中的IPC组件。一个RPC工具，要考虑如下几个点：
 
 - 通信模型：假设通信的为A机器与B机器，A与B之间有通信模型，在Java中一般基于BIO或NIO；。
+
 - 过程（服务）定位：使用给定的通信方式，与确定IP与端口及方法名称确定具体的过程或方法；
+
 - 远程代理对象：本地调用的方法(服务)其实是远程方法的本地代理，因此可能需要一个远程代理对象，对于Java而言，远程代理对象可以使用Java的动态对象实现，封装了调用远程方法调用；
+
 - 序列化，将对象名称、方法名称、参数等对象信息进行网络传输需要转换成二进制传输，这里可能需要不同的序列化技术方案。如:thrift,protobuf,Arvo等。
 
- 
+  
 
 本仓库是一个基于java8 socket来实现的rpc调用示例，以加深对rpc实现的本质认识。
 
-服务协议接口：
+### 1.1 服务协议接口
 
 ```java
 package top.tiny.group.proto;
@@ -24,7 +31,7 @@ public interface IHello {
 
 
 
-服务协议接口实现：
+### 1.2 服务协议接口实现
 
 ```java
 package top.tiny.group.proto.impl;
@@ -42,7 +49,7 @@ public class HelloServiceImpl implements IHello {
 
 
 
-RpcClient实现：
+### 1.3 RpcClient实现
 
 ```java
 package top.tiny.group.remoting;
@@ -110,7 +117,7 @@ public class RpcClientProxy<T> implements InvocationHandler {
 
 
 
-RpcServer实现：
+### 1.3 RpcServer实现
 
 ```java
 package top.tiny.group.remoting;
@@ -202,13 +209,27 @@ public class RpcServer {
 }
 ```
 
-上面即是一个最简单化的Rpc实现，有如下几点比较明显的局限性：
+依次运行:RpcServer#main、RpcClientProxy#main , 命令行输出：
+
+![cli.png](./cli.png)
+
+
+
+## 二、总结
+
+上面即是一个最简单化的Rpc工具包实现，拥有RpcClient、RpcServer、Net、Codec、service-discovery等功能。有如下几点比较明显的局限性：
 
 - 序列化局限，原生序列化只能序列化实现了【Serializable】接口的服务类，并且序列化复杂对象时，内容庞大效率极低，需要高效的序列化协议进行序列化参数方法等必要请求入参
+
 - BIO性能局限，socket服务端采用默认的BIO来阻塞获取输入流，效率低下，需采用NIO等异步非阻塞服务端方案，例如netty,mina和java nio等。
+
 - 在大型企业级RPC解决方案中，客户端和服务端的长连接需要一直保持，否则每次调用时都要重新进行三次握手和四次挥手，这样频繁的创建tcp连接对机器性能是极大的损耗，对socket的连接可以采用apache pool2连接池等方案
-- 服务端负载，需要考虑服务自动发现，让客户端在不需要重启的情况下能动态感知服务端的变化，从而实现热部署等。可以采用办法定时自动轮询，zookeeper等。
+
+- 服务端负载，需要考虑分布式服务自动发现，让客户端在不需要重启的情况下能动态感知服务端的变化，从而实现热部署等。可以采用办法定时自动轮询，zookeeper等。
+
 - 服务端服务类执行异常，客户端感知等。
+
+  
 
 基于这个最简单的rpc认识，可以开始进一步阅读 基于zk、thrift、netty的企业级RPC解决方案。
 
