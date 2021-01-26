@@ -217,7 +217,7 @@ public class RpcServer {
 
 ## 二、总结
 
-上面即是一个最简单化的Rpc工具包实现，拥有RpcClient、RpcServer、Net、Codec、service-discovery等功能。有如下几点比较明显的局限性：
+上面即是一个最简单化的Rpc工具包实现，拥有RpcClient、RpcServer、Net、Codec、service-discovery等模块。有如下几点比较明显的局限性：
 
 - 序列化局限，原生序列化只能序列化实现了【Serializable】接口的服务类，并且序列化复杂对象时，内容庞大效率极低，需要高效的序列化协议进行序列化参数方法等必要请求入参
 
